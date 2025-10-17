@@ -52,13 +52,49 @@ Shopifyアプリ開発の学習を目的とした、404ページのリダイレ�
 - データベースファイルの配置場所（`prisma/dev.sqlite`）
 - `.gitignore`での機密情報保護の重要性
 
-#### 🔜 次のステップ
+---
+
+### 2024年10月17日（Day 2）
+
+#### ✅ 完了した作業
 
 **フェーズ2: バックエンドAPIの実装**
-- `app/routes/api.redirect-settings.tsx` を作成
-- GET: 現在の設定を取得するAPI
-- POST: 設定を保存/更新するAPI
-- Shopify Admin API認証の実装
+
+1. **APIルート作成**: `app/routes/api.redirect-setting.tsx`
+   - POSTリクエストで設定を保存/更新
+   - `prisma.upsert()`で既存データの更新または新規作成
+   - レスポンス形式: `{ success: true, settings: {...} }`
+
+**フェーズ3: 管理画面UIの実装**
+
+2. **メイン管理画面の実装**: `app/routes/app._index.tsx`
+   - Polaris Web Componentsを使用したUI構築
+     - `<s-text-field>`: リダイレクト先URL入力
+     - `<s-checkbox>`: 有効/無効の切り替え
+     - `<s-button>`: 保存ボタン
+   - `useFetcher()`でフォーム送信とローディング状態管理
+   - トースト通知で保存成功を表示
+   - デバッグ用セクション（保存結果と現在の設定表示）
+
+
+#### 📝 学んだこと
+
+- Polaris Web Componentsの使用方法とプロパティ名（React標準とは異なる場合がある）
+- `useFetcher()`を使ったフォーム送信パターン
+- Shopify App BridgeのToast API
+- TypeScriptでのイベントハンドラー型安全性の確保
+- Prismaの`upsert()`メソッドの活用
+- React Routerのloader/action パターン
+
+#### 🔜 次のステップ
+
+**フェーズ4: App Proxyの実装**
+- Theme側から設定を取得できるエンドポイント作成
+- CORS対応とHMAC検証
+
+**フェーズ5: Theme App Extensionの実装**
+- 404ページ判定ロジック
+- リダイレクト処理の実装
 
 ---
 
@@ -126,8 +162,8 @@ npx prisma migrate dev
 ## 📋 開発計画（全体）
 
 - [x] **フェーズ1**: データ層の構築（Prisma）
-- [ ] **フェーズ2**: バックエンドAPI（GET/POST）
-- [ ] **フェーズ3**: 管理画面UI（設定フォーム）
+- [x] **フェーズ2**: バックエンドAPI（GET/POST）
+- [x] **フェーズ3**: 管理画面UI（設定フォーム）
 - [ ] **フェーズ4**: App Proxy（設定配信）
 - [ ] **フェーズ5**: Theme App Extension（実際のリダイレクト機能）
 - [ ] **フェーズ6**: テスト・改善・公開準備
@@ -160,4 +196,4 @@ npx prisma migrate dev
 
 ---
 
-最終更新: 2024年10月16日
+最終更新: 2024年10月17日
