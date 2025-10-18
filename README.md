@@ -86,14 +86,74 @@ Shopifyアプリ開発の学習を目的とした、404ページのリダイレ�
 - Prismaの`upsert()`メソッドの活用
 - React Routerのloader/action パターン
 
-#### 🔜 次のステップ
+---
+
+### 2025年10月18日（Day 3）
+
+#### ✅ 完了した作業
 
 **フェーズ4: App Proxyの実装**
-- Theme側から設定を取得できるエンドポイント作成
-- CORS対応とHMAC検証
+
+1. **App Proxy エンドポイント作成**: `app/routes/api.proxy.settings.tsx`
+   - Theme側から設定を取得できるAPIエンドポイント
+   - クエリパラメータから`shop`を取得
+   - Prismaでデータベースから設定を検索
+   - JSON形式でレスポンスを返す
+   - エラーハンドリング（shopパラメータ必須、デフォルト値）
+
+2. **HMAC検証ユーティリティ作成**: `app/utils/verifyProxyHmac.ts`
+   - Shopify App ProxyのHMAC署名を検証
+   - HMAC-SHA256でセキュリティ確保
+   - 不正なリクエストを拒否
+   - 開発環境ではスキップ（直接テスト可能）
+
+3. **shopify.app.toml にApp Proxy設定追加**
+   ```toml
+   [app_proxy]
+   url = "https://YOUR_APP_URL/api/proxy"
+   subpath = "404redirect"
+   prefix = "apps"
+   ```
+   - Theme側から `/apps/404redirect/*` でアクセス可能に
+   - Shopifyが自動的にアプリサーバーに転送
+   - 署名を自動付与してセキュリティ確保
+
+4. **動作確認テスト**
+   - APIエンドポイントの正常動作を確認
+   - エラーハンドリングのテスト
+   - HMAC検証後の動作確認
+   - App Proxy設定の反映確認
+
+#### 📝 学んだこと
+
+- **App Proxyの概念**
+  - Proxyとは「間に入る中継役」
+  - ShopifyがThemeとアプリサーバーを中継
+  - セキュリティとCORS問題の解決
+  - リアルタイムでデータの取得
+
+- **HMAC検証の重要性**
+  - Shopifyからのリクエストの正当性を証明
+  - HMAC-SHA256による署名検証
+  - パラメータをソートして署名を計算
+
+- **URLのパース処理**
+  - `new URL(request.url)`で文字列を構造化
+  - `searchParams.get()`でクエリパラメータを取得
+  - クエリパラメータはリクエスト側が設定
+
+- **開発環境と本番環境の違い**
+  - 開発環境では直接アクセス（HMAC検証スキップ）
+  - 本番環境ではShopify経由（HMAC検証必須）
+  - `process.env.NODE_ENV`で環境判定
+
+
+#### 🔜 次のステップ
 
 **フェーズ5: Theme App Extensionの実装**
+- Theme App Extensionの雛形作成
 - 404ページ判定ロジック
+- App Proxy経由でデータ取得
 - リダイレクト処理の実装
 
 ---
@@ -120,8 +180,12 @@ simple-404-custom-app/
 │   │   ├── app._index.tsx           # メイン管理画面
 │   │   ├── app.additional.tsx       # 追加ページ
 │   │   ├── app.tsx                  # アプリレイアウト
+│   │   ├── api.redirect-setting.tsx # 設定保存API
+│   │   ├── api.proxy.settings.tsx   # App Proxyエンドポイント（NEW）
 │   │   ├── auth.$.tsx               # OAuth認証
 │   │   └── webhooks.*.tsx           # Webhook処理
+│   ├── utils/
+│   │   └── verifyProxyHmac.ts       # HMAC検証ユーティリティ（NEW）
 │   ├── shopify.server.ts            # Shopify設定
 │   └── db.server.ts                 # Prisma設定
 ├── prisma/
@@ -129,7 +193,7 @@ simple-404-custom-app/
 │   ├── dev.sqlite                   # 開発用DB（gitignore済み）
 │   └── migrations/                  # マイグレーション履歴
 ├── extensions/                      # （今後実装）Theme App Extension
-└── shopify.app.toml                 # アプリ設定
+└── shopify.app.toml                 # アプリ設定（App Proxy設定追加済み）
 ```
 
 ---
@@ -164,7 +228,7 @@ npx prisma migrate dev
 - [x] **フェーズ1**: データ層の構築（Prisma）
 - [x] **フェーズ2**: バックエンドAPI（GET/POST）
 - [x] **フェーズ3**: 管理画面UI（設定フォーム）
-- [ ] **フェーズ4**: App Proxy（設定配信）
+- [x] **フェーズ4**: App Proxy（設定配信）✨ NEW
 - [ ] **フェーズ5**: Theme App Extension（実際のリダイレクト機能）
 - [ ] **フェーズ6**: テスト・改善・公開準備
 
@@ -196,4 +260,4 @@ npx prisma migrate dev
 
 ---
 
-最終更新: 2024年10月17日
+最終更新: 2025年10月18日

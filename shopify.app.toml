@@ -26,3 +26,8 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [ "https://example.com/api/auth" ]
+
+[app_proxy]
+url = "https://YOUR_APP_URL/api/proxy"
+subpath = "404redirect"
+prefix = "apps"
