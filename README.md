@@ -148,13 +148,77 @@ Shopifyアプリ開発の学習を目的とした、404ページのリダイレ�
   - `process.env.NODE_ENV`で環境判定
 
 
-#### 🔜 次のステップ
+---
+
+### 2025年10月18日（Day 3 - 続き）
+
+#### ✅ 完了した作業
 
 **フェーズ5: Theme App Extensionの実装**
-- Theme App Extensionの雛形作成
-- 404ページ判定ロジック
-- App Proxy経由でデータ取得
-- リダイレクト処理の実装
+
+1. **Theme App Extensionの雛形作成**
+   ```bash
+   shopify app generate extension
+   # Type: Theme app extension
+   # Name: 404-redirect
+   ```
+   - `extensions/404-redirect/` ディレクトリ作成
+   - `shopify.extension.toml` 設定ファイル生成
+
+2. **Liquidテンプレートの実装**: `blocks/404-redirect.liquid`
+   ```liquid
+   {% comment %}
+     404 Redirect Extension
+     このブロックは404ページで自動的にリダイレクトを実行します
+   {% endcomment %}
+   
+   <script src="{{ '404-redirect.js' | asset_url }}" defer></script>
+   
+   {% schema %}
+   {
+     "name": "404 Redirect",
+     "settings": []
+   }
+   {% endschema %}
+   ```
+
+3. **JavaScript実装**: `assets/404-redirect.js`
+   - 404ページ判定ロジック（タイトル、URL、コンテンツ）
+   - App Proxy経由で設定取得（`/apps/404redirect/settings`）
+   - リダイレクト実行（`window.location.href`）
+   - エラーハンドリングとログ出力
+
+4. **Theme App Extensionの有効化**
+   - 管理画面で404ページにExtensionを追加
+   - Theme Customizerで「404 Redirect」セクションを有効化
+   - 動作確認テスト完了
+
+5. **最終動作確認**
+   - 404ページで自動リダイレクト実行
+   - 設定されたURLへのリダイレクト成功
+
+#### 📝 学んだこと
+
+- **Theme App Extensionの仕組み**
+  - Shopify CLIでのExtension生成方法
+  - LiquidテンプレートとJavaScriptの連携
+  - Theme CustomizerでのExtension有効化
+
+- **404ページ判定の実装**
+  - 複数の判定条件（タイトル、URL、コンテンツ）
+  - 堅牢なエラーハンドリング
+  - ユーザビリティを考慮した実装
+
+- **App Proxyとの連携**
+  - Theme側からApp Proxyへのアクセス
+
+#### 🔜 次のステップ
+
+**フェーズ6: テスト・改善・公開準備**
+- エラーハンドリングの強化
+- ユーザビリティの改善
+- App Store用の説明文作成
+- プライバシーポリシー作成
 
 ---
 
@@ -192,7 +256,13 @@ simple-404-custom-app/
 │   ├── schema.prisma                # データベーススキーマ
 │   ├── dev.sqlite                   # 開発用DB（gitignore済み）
 │   └── migrations/                  # マイグレーション履歴
-├── extensions/                      # （今後実装）Theme App Extension
+├── extensions/                      # Theme App Extension
+│   └── 404-redirect/               # 404リダイレクトExtension（NEW）
+│       ├── blocks/
+│       │   └── 404-redirect.liquid # Liquidテンプレート
+│       ├── assets/
+│       │   └── 404-redirect.js     # JavaScript実装
+│       └── shopify.extension.toml  # Extension設定
 └── shopify.app.toml                 # アプリ設定（App Proxy設定追加済み）
 ```
 
@@ -228,8 +298,8 @@ npx prisma migrate dev
 - [x] **フェーズ1**: データ層の構築（Prisma）
 - [x] **フェーズ2**: バックエンドAPI（GET/POST）
 - [x] **フェーズ3**: 管理画面UI（設定フォーム）
-- [x] **フェーズ4**: App Proxy（設定配信）✨ NEW
-- [ ] **フェーズ5**: Theme App Extension（実際のリダイレクト機能）
+- [x] **フェーズ4**: App Proxy（設定配信）
+- [x] **フェーズ5**: Theme App Extension（実際のリダイレクト機能）✨ NEW
 - [ ] **フェーズ6**: テスト・改善・公開準備
 
 ---
@@ -260,4 +330,4 @@ npx prisma migrate dev
 
 ---
 
-最終更新: 2025年10月18日
+最終更新: 2025年10月18日（フェーズ5完了）

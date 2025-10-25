@@ -1,0 +1,15 @@
+{% comment %}
+  404 Redirect Extension
+  このブロックは404ページで自動的にリダイレクトを実行します
+{% endcomment %}
+
+<script src="{{ '404-redirect.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "404 Redirect",
+  "target": "section",
+  "settings": []
+}
+{% endschema %}
+
